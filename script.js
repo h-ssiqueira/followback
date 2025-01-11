@@ -34,7 +34,7 @@ async function makeRequest(url, method, tkn) {
             return false;
         }
         if(!response.ok) {
-            throw new Error(`Could not make the request!\n${response}`)
+            throw new Error(`Could not make the request! Status: ${response.status}\n${response}`);
         }
         return await response.json();
     } catch(err) {
@@ -70,7 +70,7 @@ async function isNotFollowing(usr, tkn) {
 
 async function followUser(usr, tkn) {
     try {
-        return await makeRequest(`https://api.github.com/user/following/${usr}`, "PUT",tkn);
+        return await makeRequest(`https://api.github.com/user/following/${usr}`, "PUT", tkn);
     } catch (err) {
         return;
     }
