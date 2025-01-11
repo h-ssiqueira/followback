@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const { execSync } = require('child_process');
 
 function retrieveGHToken() {
