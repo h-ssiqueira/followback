@@ -3,9 +3,6 @@ on:
   schedule:
     - cron: "0 0 * * FRI"
   workflow_dispatch:
-permissions:
-  user: read
-  follow: write  
 jobs:
   followback:
     runs-on: ubuntu-latest
