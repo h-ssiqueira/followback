@@ -1,4 +1,4 @@
-name: follow back script
+name: Follow back script
 on:
   schedule:
     - cron: "0 0 * * FRI"
@@ -16,10 +16,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-      - name: Install dependencies
-        run: npm install node-fetch
       - name: Run script
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GH_TOKEN: ${{ secrets.ACTIONS_OAUTH_TOKEN }}        
         run: node script.js
           
