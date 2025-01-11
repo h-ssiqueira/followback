@@ -109,7 +109,6 @@ async function followUser(usr, tkn) {
         for(var j = 0; j < users.length; j++) {
             var login = users[j].login;
             if(await isNotFollowing(login, tkn)){
-                console.log(`Following user: ${login}`);
                 await followUser(login, tkn);
                 usersFollowed.push(login);
             }
