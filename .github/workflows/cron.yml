@@ -1,0 +1,19 @@
+name: follow back script
+on:
+  schedule:
+    - cron: "0 0 * * FRI"
+jobs:
+  followback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+      - name: Run script
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+        run: node script.js
+          
