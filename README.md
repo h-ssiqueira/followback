@@ -12,6 +12,9 @@ Execute the script with:
 ```shell
 node script.js
 ```
+### Configuring Actions
+- Generate a token in [settings](https://github.com/settings/personal-access-tokens) - token (classic), with the scopes for `followers` and `users`
+- Add the generated secret into the [action secrets](https://github.com/h-ssiqueira/followback/settings/secrets/actions) within the repository, with the name `ACTIONS_OAUTH_TOKEN`.
 
 ## Documentation
 - [Diagram](diagram.md)

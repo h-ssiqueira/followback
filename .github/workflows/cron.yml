@@ -1,4 +1,4 @@
-name: follow back script
+name: Follow back script
 on:
   schedule:
     - cron: "0 0 * * FRI"
@@ -15,6 +15,6 @@ jobs:
           node-version: '22'
       - name: Run script
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GH_TOKEN: ${{ secrets.ACTIONS_OAUTH_TOKEN }}        
         run: node script.js
           
