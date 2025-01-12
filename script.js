@@ -43,19 +43,28 @@ async function makeRequest(url, method, tkn) {
     }
 }
 
-async function retrieveTotalFollowers(tkn) {
+async function retrieveTotalFollowInformation(tkn) {
     try {
         const resp = await makeRequest("https://api.github.com/user", "GET", tkn);
-        return resp.followers;
+        return [resp.followers,resp.following];
     } catch (err) {
         console.log(err);
         return;
     }
 }
 
-async function getNextPage(i, tkn) {
+async function getNextFollowersPage(i, tkn) {
     try {
         return await makeRequest(`https://api.github.com/user/followers?per_page=100&page=${i}`, "GET", tkn);
+    } catch (err) {
+        console.log(err);
+        return;
+    }
+}
+
+async function getNextFollowingsPage(i, tkn) {
+    try {
+        return await makeRequest(`https://api.github.com/user/following?per_page=100&page=${i}`, "GET", tkn);
     } catch (err) {
         console.log(err);
         return;
@@ -92,16 +101,17 @@ async function followUser(usr, tkn) {
         return;
     }
 
-    const totalFollowers = await retrieveTotalFollowers(tkn);
+    const userInfo = await retrieveTotalFollowInformation(tkn);
 
-    console.log(`Total Followers: ${totalFollowers}`);
+    console.log(`Total followers: ${userInfo[0]}`);
+    console.log(`Total following: ${userInfo[1]}`);
     let usersFollowed = [];
     let usersProcessed = 0;
 
-    const totalPages = Math.ceil(totalFollowers / 100);
+    const totalPages = Math.ceil(userInfo[0] / 100);
     for (var i = 1; i <= totalPages; i++) {
         console.log(`Page [${i}/${totalPages}]`)
-        var users = await getNextPage(i, tkn);
+        var users = await getNextFollowersPage(i, tkn);
         if(users.empty) {
             break;
         }
