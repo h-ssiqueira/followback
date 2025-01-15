@@ -17,5 +17,5 @@ node script.js
 - Add the generated secret into the [action secrets](https://github.com/h-ssiqueira/followback/settings/secrets/actions) within the repository, with the name `ACTIONS_OAUTH_TOKEN`.
 
 ## Documentation
-- [Diagram](diagram.md)
+- [Diagram](diagram_v2.md)
 - [Flow](flow.md)
