@@ -4,10 +4,10 @@ start
 
 :Setup the authentication token;
 
-:Get the total number followers of the authenticated user;
+:Get the total number of followers of the authenticated user;
 
 repeat :Get next page of followers;
-    repeat :Get next follwer user;
+    repeat :Get next follower user;
         if (Does the authenticated user follow this user?) then (no)
             :Follow user;
         else (yes)
