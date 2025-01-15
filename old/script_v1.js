@@ -43,10 +43,10 @@ async function makeRequest(url, method, tkn) {
     }
 }
 
-async function retrieveTotalFollowInformation(tkn) {
+async function retrieveTotalFollowers(tkn) {
     try {
         const resp = await makeRequest("https://api.github.com/user", "GET", tkn);
-        return [resp.followers,resp.following];
+        return resp.followers;
     } catch (err) {
         console.log(err);
         return;
@@ -62,9 +62,10 @@ async function getNextFollowersPage(i, tkn) {
     }
 }
 
-async function getNextFollowingsPage(i, tkn) {
+async function isNotFollowing(usr, tkn) {
     try {
-        return await makeRequest(`https://api.github.com/user/following?per_page=100&page=${i}`, "GET", tkn);
+        console.log(`Checking user: ${usr}`);
+        return !(await makeRequest(`https://api.github.com/user/following/${usr}`, "GET", tkn));
     } catch (err) {
         console.log(err);
         return;
@@ -84,20 +85,6 @@ async function followUser(usr, tkn) {
     }
 }
 
-async function retrieveUsersLogin(getPage, totalItems, tkn) {
-    let logins = [];
-    var totalPages = Math.ceil(totalItems / 100);
-    for (var i = 1; i <= totalPages; i++) {
-        console.log(`Page [${i}/${totalPages}]`);
-        var users = await getPage(i, tkn);
-        if(users.empty) {
-            break;
-        }
-        logins  = logins.concat(users.map(usr => usr.login));
-    }
-    return logins;
-}
-
 (async () => {
     const tkn = retrieveGHToken();
     if(!tkn) {
@@ -105,16 +92,28 @@ async function retrieveUsersLogin(getPage, totalItems, tkn) {
         return;
     }
 
-    const userInfo = await retrieveTotalFollowInformation(tkn);
+    const totalFollowers = await retrieveTotalFollowers(tkn);
 
-    console.log("Rerieving followers...");
-    let followersLogins = await retrieveUsersLogin(getNextFollowersPage, userInfo[0],tkn);
-    console.log("Rerieving following users...");
-    let followingLogins = new Set(await retrieveUsersLogin(getNextFollowingsPage, userInfo[1], tkn));
-    console.log("Processing lists...");
-    let usersFollowed = (await followersLogins).filter(usr => !followingLogins.has(usr));
-    usersFollowed.forEach(login => {
-        followUser(login, tkn);
-    });
-    console.log(`Followers: ${followersLogins.length}\nFollowing: ${followingLogins.size}\nFollowed: ${usersFollowed.length} users:\n${usersFollowed}`);
+    console.log(`Total followers: ${totalFollowers}`);
+    let usersFollowed = [];
+    let usersProcessed = 0;
+
+    const totalPages = Math.ceil(totalFollowers / 100);
+    for (var i = 1; i <= totalPages; i++) {
+        console.log(`Page [${i}/${totalPages}]`)
+        var users = await getNextFollowersPage(i, tkn);
+        if(users.empty) {
+            break;
+        }
+        usersProcessed += users.length;
+        for(var j = 0; j < users.length; j++) {
+            var login = users[j].login;
+            if(await isNotFollowing(login, tkn)){
+                await followUser(login, tkn);
+                usersFollowed.push(login);
+            }
+        }
+    }
+    console.log(`Processed: ${usersProcessed} users`);
+    console.log(`Followed: ${usersFollowed.length} users:\n${usersFollowed}`);
 })();
